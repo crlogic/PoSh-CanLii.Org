@@ -1,5 +1,5 @@
 # PoSh-CanLii.Org
-A PowerShell Module for the CanLii.Org API
+A PowerShell Module for the [CanLii.Org API](https://github.com/canlii/API_documentation)
 
 # Installation
 git clone https://github.com/crlogic/PoSh-CanLii.Org.git
