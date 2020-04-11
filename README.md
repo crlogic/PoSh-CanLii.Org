@@ -20,8 +20,13 @@ Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-Ca
 ## Retrieve caselaw metadata
 Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
 
-## Usage Aids
+### Usage Aids
 Use Get-help -Full for additional examples
+
+# Use-Cases
+- Export list of case metadata to CSV/Excel for further tracking/filtering
+
+- Parse common metadata tags from output
 
 # Todo
 Complete remaining API
