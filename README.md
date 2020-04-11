@@ -29,5 +29,6 @@ Use Get-help -Full for additional examples
 - Parse common metadata tags from output
 
 # Todo
-Complete remaining API
-Include Pester tests (requires control results)
+- Complete remaining API
+
+- Include Pester tests (requires control results)
