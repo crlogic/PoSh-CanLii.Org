@@ -3,7 +3,9 @@ A PowerShell Module for the CanLii.Org API
 
 # Installation
 git clone https://github.com/crlogic/PoSh-CanLii.Org.git
+
 cd .\PoSh-CanLii.Org
+
 Import-Module .\Posh-CanLii.Org.psm1
 
 # Usage
