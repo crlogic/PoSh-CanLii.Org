@@ -149,7 +149,6 @@ function Get-CanliiCaselaw
     }
     Process {
         $baseURL = "https://api.canlii.org/v1/caseBrowse/$Language/$DatabaseId/?offset=0&resultCount=10000"
-        $script:URI = ''
         switch ($PsCmdlet.ParameterSetName) {
             Published {$URI = "$baseURL&publishedAfter=$publishedAfter&publishedBefore=$publishedBefore&api_key=$APIKey"}
             Modified {$URI = "$baseURL&modifiedAfter=$modifiedAfter&modifiedBefore=$modifiedBefore&api_key=$APIKey"}
@@ -215,7 +214,6 @@ function Get-CanliiCaseMetadata
         $URI = "https://api.canlii.org/v1/caseBrowse/$Language/$databaseId/$caseidentry/?api_key=$APIkey"
         try {
             Invoke-RestMethod -Uri $URI -ErrorAction Stop
-            #$URI
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
