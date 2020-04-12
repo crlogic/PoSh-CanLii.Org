@@ -43,7 +43,8 @@ function Get-CanLiiDatabases
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                throw 'API Quota exceeded, quitting'
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
             }
         }
         $Databases = foreach ($case in $caseDatabases) {
@@ -171,7 +172,8 @@ function Get-CanliiCaselaw
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                throw 'API Quota exceeded, quitting'
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
             }
         }
         $Cases = foreach ($case in $canliiCases) {
@@ -226,7 +228,8 @@ function Get-CanliiCaseMetadata
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                throw 'API Quota exceeded, quitting'
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
             }
         }
     }
@@ -276,7 +279,8 @@ function Get-CanliiCaseCitor
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                throw 'API Quota exceeded, quitting'
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
             }
         }
     }
