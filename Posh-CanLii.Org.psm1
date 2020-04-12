@@ -97,6 +97,15 @@ function Get-CanliiCaselaw
         [ValidateNotNullOrEmpty()]
         [string]$DatabaseId,
 
+        [Parameter(ParameterSetName='Default')]
+        [Parameter(ParameterSetName='Published')]
+        [Parameter(ParameterSetName='Modified')]
+        [Parameter(ParameterSetName='Changed')]
+        [Parameter(ParameterSetName='Decision')]
+        [Parameter(Mandatory=$false)]
+        [ValidateRange(1,10000)]
+        [string]$resultCount = 10000,
+
         [Parameter(ParameterSetName='Published',Mandatory=$true,HelpMessage='Use YYYY-MM-DD date format')]
         [ValidateScript({Get-Date $_ -Format yyyy-MM-dd})]
         [String]$publishedAfter,
@@ -148,7 +157,7 @@ function Get-CanliiCaselaw
         }    
     }
     Process {
-        $baseURL = "https://api.canlii.org/v1/caseBrowse/$Language/$DatabaseId/?offset=0&resultCount=10000"
+        $baseURL = "https://api.canlii.org/v1/caseBrowse/$Language/$DatabaseId/?offset=0&resultCount=$resultCount"
         switch ($PsCmdlet.ParameterSetName) {
             Published {$URI = "$baseURL&publishedAfter=$publishedAfter&publishedBefore=$publishedBefore&api_key=$APIKey"}
             Modified {$URI = "$baseURL&modifiedAfter=$modifiedAfter&modifiedBefore=$modifiedBefore&api_key=$APIKey"}
