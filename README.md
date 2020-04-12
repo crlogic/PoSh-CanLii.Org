@@ -25,7 +25,8 @@ Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-Ca
 
 ## Retrieve caselaw metadata
 ```PowerShell
-Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
+$caseLaw = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
+$caseLaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
 ```
 
 ### Usage Aids
