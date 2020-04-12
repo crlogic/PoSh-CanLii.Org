@@ -62,5 +62,7 @@ $filteredMetaData | Export-Csv MyList.csv
 
 # Todo
 - Complete remaining API
+  - legislationBrowse
+  - legislationBrowse metadata
 
 - Include Pester tests (requires control results)
