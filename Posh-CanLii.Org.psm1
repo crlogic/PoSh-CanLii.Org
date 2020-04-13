@@ -1,14 +1,14 @@
 ﻿<#
 .Synopsis
-   Retrieve the list of Canlii.org databases
+   Retrieve the list of Canlii.org case databases
 .DESCRIPTION
-   Retrieve the list of Canlii.org databases using the private REST API
+   Retrieve the list of Canlii.org case databases using the private REST API
 .EXAMPLE
-   Get-CanliiDatabases -APIkey $APIKey
+   Get-CanLiiCaseDatabases -APIkey $APIKey
 .EXAMPLE
-   Get-CanliiDatabases -APIkey $APIKey -Language fr
+   Get-CanLiiCaseDatabases -APIkey $APIKey -Language fr
 #>
-function Get-CanLiiDatabases
+function Get-CanLiiCaseDatabases
 {
     [CmdletBinding()]
     Param
@@ -64,7 +64,7 @@ function Get-CanLiiDatabases
 .EXAMPLE
    Get-CanliiCaselaw -DatabaseID sklgb -APIkey $APIKey
 .EXAMPLE
-   Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
+   Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
 #>
 function Get-CanliiCaselaw
 {
@@ -193,7 +193,8 @@ function Get-CanliiCaselaw
 .EXAMPLE
    Get-CanliiCaseMetadata -DatabaseId sklgb -CaseId 1918canlii290 -APIkey $APIKey
 .EXAMPLE
-   Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
+   Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw |
+     Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
 #>
 function Get-CanliiCaseMetadata
 {
@@ -243,8 +244,8 @@ function Get-CanliiCaseMetadata
 .EXAMPLE
     Get-CanliiCaseCitor -DatabaseId sklgb -CaseId 1918canlii290 -citeType citedCases -APIkey $APIKey
 .EXAMPLE
-    Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | 
-        Get-CanliiCaselaw | Where title -match 'Sale of Shares' | Get-CanliiCaseCitor -citeType citedCases 
+    Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | 
+        Get-CanliiCaselaw | Get-CanliiCaseCitor -citeType citedCases 
 #>
 function Get-CanliiCaseCitor
 {
@@ -285,3 +286,188 @@ function Get-CanliiCaseCitor
         }
     }
 }
+
+# # Legislation
+
+<#
+.Synopsis
+   Retrieve the list of Canlii.org legislation databases
+.DESCRIPTION
+   Retrieve the list of Canlii.org legislation databases using the private REST API
+.EXAMPLE
+   Get-CanLiiLegislationDatabases -APIkey $APIKey
+.EXAMPLE
+   Get-CanLiiLegislationDatabases -APIkey $APIKey -Language fr
+#>
+function Get-CanLiiLegislationDatabases
+{
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$APIkey,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet('en','fr')]
+        $Language = 'en'
+    )
+    Begin {
+        class CanliiLegislationDatabase {
+            [string]$databaseid
+            [string]$type
+            [string]$jurisdiction
+            [string]$name
+
+            CanliiDatabase([pscustomobject]$legislationDatabases) {
+                $this.databaseId = $legislationDatabases.databaseId
+                $this.type = $legislationDatabases.type
+                $this.jurisdiction = $legislationDatabases.jurisdiction
+                $this.name = $legislationDatabases.name
+                $this.APIkey = $null
+            }
+            hidden [string]$APIkey
+        }    
+    }
+    Process {
+        $URI = "https://api.canlii.org/v1/legislationBrowse/$Language/?api_key=$APIKey"
+        try {
+            $legislationDatabases = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty legislationDatabases
+        }
+        catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
+            }
+        }
+        $Databases = foreach ($case in $legislationDatabases) {
+            [CanliiLegislationDatabase]$caseentry = $case
+            $caseentry.apikey = $APIkey
+            $caseentry
+        }
+        $Databases
+    }
+}
+
+<#
+.Synopsis
+   Retrieve specific legislation from a Canlii.org legislation database
+.DESCRIPTION
+   Retrieve specific legislation from a Canlii.org legislation database using the private REST API
+.EXAMPLE
+   Get-CanliiLegislation -DatabaseID sklgb -APIkey $APIKey
+.EXAMPLE
+   Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation 
+#>
+function Get-CanliiLegislation
+{
+    [CmdletBinding(DefaultParameterSetName='Default')]
+    Param
+    (
+        [Parameter(ParameterSetName='Default')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$APIkey,
+
+        [Parameter(ParameterSetName='Default')]
+        [Parameter(Mandatory=$false,ValueFromPipelineByPropertyName=$true)]
+        [ValidateSet('en','fr')]
+        $Language = 'en',
+        
+        [Parameter(ParameterSetName='Default')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$DatabaseId
+    )
+    Begin {
+        class CanliiLegislation {
+            [string]$databaseid
+            [PSCustomObject]$legislationId
+            [string]$title
+            [string]$citation
+            [string]$type
+
+            CanliiCase() {}
+            CanliiCase([pscustomobject]$canliilegislation) {
+                $this.databaseId = $canliilegislation.databaseId
+                $this.caseId = $canliilegislation.caseId
+                $this.title = $canliilegislation.title
+                $this.citation = $canliilegislation.citation
+                $this.type = $canliilegislation.type
+                $this.APIkey = $null
+            }
+            hidden [string] $APIkey
+        }    
+    }
+    Process {
+        $URI = "https://api.canlii.org/v1/legislationBrowse/$Language/$DatabaseId/?api_key=$APIKey"
+        
+        try {
+            $canliilegislations = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty legislations
+        }
+        catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
+            }
+        }
+        $Cases = foreach ($case in $canliilegislations) {
+            [CanliiLegislation]$caseentry = $case
+            $caseentry.apikey = $APIkey
+            $caseentry
+        }
+        $Cases
+    }
+}
+
+<#
+.Synopsis
+   Retrieve legislation specific metadata from a Canlii.org legislation database
+.DESCRIPTION
+   Retrieve legislation specific metadata from a Canlii.org legislation database using the private REST API
+.EXAMPLE
+   Get-CanliiLegislationMetadata -DatabaseId ska -LegislationId ss-1978-supp-c-14 -APIkey $APIKey
+.EXAMPLE
+   Get-CanLiiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | 
+        Get-CanliiLegislation | Where title -match 'Relief Amendment Act' | Get-CanliiLegislationMetadata
+#>
+function Get-CanliiLegislationMetadata
+{
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$APIkey,
+
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$databaseid,
+
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$LegislationId,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet('en','fr')]
+        $Language = 'en'
+    )
+    Process {
+        switch -Regex ($LegislationId) {
+            '@{en=' {$legislationidentry = $legislationid.Substring(5).trimend('}')}
+            '@{fr=' {$legislationidentry = $legislationid.Substring(5).trimend('}')}
+            default {$legislationidentry = $legislationid}
+        }
+        $URI = "https://api.canlii.org/v1/legislationBrowse/$Language/$databaseId/$legislationidentry/?api_key=$APIkey"
+        try {
+            Invoke-RestMethod -Uri $URI -ErrorAction Stop
+        }
+        catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Error 'API Quota exceeded, quitting'
+                Throw
+            }
+        }
+    }
+}
+
