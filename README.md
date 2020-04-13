@@ -15,18 +15,28 @@ An API key is required. It can be requested at https://www.canlii.org/en/feedbac
 
 ## Retrieve list of databases
 ```PowerShell
+# Caselaw
 Get-CanliiCaseDatabases -APIkey $APIKey
+# Legislation
+Get-CanliiLegislationDatabases -APIkey $APIKey
 ```
 
-## Retrieve specific caselaw
+## Retrieve specific caselaw/legislation
 ```PowerShell
+# Caselaw
 Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
+# Legislation
+Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
 ```
 
-## Retrieve caselaw metadata
+## Retrieve metadata
 ```PowerShell
+# Caselaw
 $caseLaw = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
 $caseLaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
+# Legislation
+$legislation = Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
+$legislation | Get-CanliiLegislationMetadata
 ```
 
 ### Usage Aids
