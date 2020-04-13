@@ -17,6 +17,7 @@ An API key is required. It can be requested at https://www.canlii.org/en/feedbac
 ```PowerShell
 # Caselaw
 Get-CanliiCaseDatabases -APIkey $APIKey
+
 # Legislation
 Get-CanliiLegislationDatabases -APIkey $APIKey
 ```
@@ -25,6 +26,7 @@ Get-CanliiLegislationDatabases -APIkey $APIKey
 ```PowerShell
 # Caselaw
 Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
+
 # Legislation
 Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
 ```
@@ -41,6 +43,7 @@ Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb |
 # Caselaw
 $caseLaw = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
 $caseLaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
+
 # Legislation
 $legislation = Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
 $legislation | Get-CanliiLegislationMetadata
