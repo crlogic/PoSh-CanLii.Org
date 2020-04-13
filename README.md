@@ -29,6 +29,12 @@ Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Ge
 Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
 ```
 
+## Retrieve case citor
+```PowerShell
+Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | 
+  Get-CanliiCaselaw | Get-CanliiCaseCitor -citeType citedCases 
+```
+
 ## Retrieve metadata
 ```PowerShell
 # Caselaw
