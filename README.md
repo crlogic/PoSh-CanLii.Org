@@ -31,6 +31,7 @@ Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska
 
 ## Retrieve case citor
 ```PowerShell
+# Caselaw only
 Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | 
   Get-CanliiCaselaw | Get-CanliiCaseCitor -citeType citedCases 
 ```
