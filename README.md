@@ -15,17 +15,17 @@ An API key is required. It can be requested at https://www.canlii.org/en/feedbac
 
 ## Retrieve list of databases
 ```PowerShell
-Get-CanliiDatabases -APIkey $APIKey
+Get-CanliiCaseDatabases -APIkey $APIKey
 ```
 
 ## Retrieve specific caselaw
 ```PowerShell
-Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
+Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
 ```
 
 ## Retrieve caselaw metadata
 ```PowerShell
-$caseLaw = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
+$caseLaw = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
 $caseLaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
 ```
 
