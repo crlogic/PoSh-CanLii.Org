@@ -1,13 +1,13 @@
-# PoSh-CanLii.Org
-A PowerShell Module for the [CanLii.Org API](https://github.com/canlii/API_documentation)
+# PoSh-CanLii.org
+A PowerShell Module for the [CanLii.org API](https://github.com/canlii/API_documentation)
 
 # Installation
 ```
-git clone https://github.com/crlogic/PoSh-CanLii.Org.git
+git clone https://github.com/crlogic/PoSh-CanLii.org.git
 
-cd .\PoSh-CanLii.Org
+cd .\PoSh-CanLii.org
 
-Import-Module .\Posh-CanLii.Org.psm1
+Import-Module .\Posh-CanLii.org.psm1
 ```
 
 # Usage
