@@ -1,13 +1,13 @@
-# PoSh-CanLii.Org
-A PowerShell Module for the [CanLii.Org API](https://github.com/canlii/API_documentation)
+# PoSh-CanLii.org
+A PowerShell Module for the [CanLii.org API](https://github.com/canlii/API_documentation)
 
 # Installation
 ```
-git clone https://github.com/crlogic/PoSh-CanLii.Org.git
+git clone https://github.com/crlogic/PoSh-CanLii.org.git
 
-cd .\PoSh-CanLii.Org
+cd .\PoSh-CanLii.org
 
-Import-Module .\Posh-CanLii.Org.psm1
+Import-Module .\Posh-CanLii.org.psm1
 ```
 
 # Usage
@@ -15,18 +15,38 @@ An API key is required. It can be requested at https://www.canlii.org/en/feedbac
 
 ## Retrieve list of databases
 ```PowerShell
-Get-CanliiDatabases -APIkey $APIKey
+# Caselaw
+Get-CanliiCaseDatabases -APIkey $APIKey
+
+# Legislation
+Get-CanliiLegislationDatabases -APIkey $APIKey
 ```
 
-## Retrieve specific caselaw
+## Retrieve specific caselaw/legislation
 ```PowerShell
-Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
+# Caselaw
+Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw
+
+# Legislation
+Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
 ```
 
-## Retrieve caselaw metadata
+## Retrieve case citor
 ```PowerShell
-$caseLaw = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
+# Caselaw only
+Get-CanLiiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | 
+  Get-CanliiCaselaw | Get-CanliiCaseCitor -citeType citedCases 
+```
+
+## Retrieve metadata
+```PowerShell
+# Caselaw
+$caseLaw = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq sklgb | Get-CanliiCaselaw 
 $caseLaw | Where title -match 'Sale of Shares' | Get-CanliiCaseMetadata
+
+# Legislation
+$legislation = Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation
+$legislation | Get-CanliiLegislationMetadata
 ```
 
 ### Usage Aids
@@ -35,14 +55,14 @@ Use Get-help -Full for additional examples
 # Use-Cases
 - Export list of case metadata to CSV/Excel for further tracking/filtering
 ```PowerShell
-$database = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
+$database = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
 $caseLaw =  $database| Get-CanliiCaselaw -resultCount 25
 $caseLaw | Get-CanliiCaseMetadata | Export-Csv MyList.csv
 ```
 
 - Parse common metadata tags from output
 ```PowerShell
-$database = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
+$database = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
 $caseLaw =  $database| Get-CanliiCaselaw -resultCount 25
 $caseLawMetaData = $caseLaw | Get-CanliiCaseMetadata
 $keywords = $caseLawMetaData.keywords.foreach({$_.split(' — ')})
@@ -51,7 +71,7 @@ $keywords | Group | Select count,name | Sort count -Descending
 
 - Export a subset of parsed caselaw
 ```PowerShell
-$database = Get-CanliiDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
+$database = Get-CanliiCaseDatabases -APIkey $APIKey | Where-Object databaseid -eq onltb
 $caseLaw =  $database| Get-CanliiCaselaw -resultCount 25
 $caseLawMetaData = $caseLaw | Get-CanliiCaseMetadata
 $keywords = $caseLawMetaData.keywords.foreach({$_.split(' — ')})
@@ -61,8 +81,4 @@ $filteredMetaData | Export-Csv MyList.csv
 ```
 
 # Todo
-- Complete remaining API
-  - legislationBrowse
-  - legislationBrowse metadata
-
 - Include Pester tests (requires control results)
