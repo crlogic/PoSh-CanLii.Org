@@ -42,10 +42,16 @@ function Get-CanLiiCaseDatabases
             $caseDatabases = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty caseDatabases
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
         $Databases = foreach ($case in $caseDatabases) {
             [CanliiDatabase]$caseentry = $case
@@ -171,10 +177,16 @@ function Get-CanliiCaselaw
             $canliiCases = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty cases
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
         $Cases = foreach ($case in $canliiCases) {
             [Canliicase]$caseentry = $case
@@ -228,10 +240,16 @@ function Get-CanliiCaseMetadata
             Invoke-RestMethod -Uri $URI -ErrorAction Stop
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
     }
 }
@@ -279,10 +297,16 @@ function Get-CanliiCaseCitor
             Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty *
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
     }
 }
@@ -335,10 +359,16 @@ function Get-CanLiiLegislationDatabases
             $legislationDatabases = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty legislationDatabases
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
         $Databases = foreach ($case in $legislationDatabases) {
             [CanliiLegislationDatabase]$caseentry = $case
@@ -355,7 +385,7 @@ function Get-CanLiiLegislationDatabases
 .DESCRIPTION
    Retrieve specific legislation from a Canlii.org legislation database using the private REST API
 .EXAMPLE
-   Get-CanliiLegislation -DatabaseID sklgb -APIkey $APIKey
+   Get-CanliiLegislation -DatabaseID ska -APIkey $APIKey
 .EXAMPLE
    Get-CanliiLegislationDatabases -APIkey $APIKey | Where-Object databaseid -eq ska | Get-CanliiLegislation 
 #>
@@ -406,10 +436,16 @@ function Get-CanliiLegislation
             $canliilegislations = Invoke-RestMethod -Uri $URI -ErrorAction Stop | Select-Object -ExpandProperty legislations
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
         $Cases = foreach ($case in $canliilegislations) {
             [CanliiLegislation]$caseentry = $case
@@ -463,10 +499,16 @@ function Get-CanliiLegislationMetadata
             Invoke-RestMethod -Uri $URI -ErrorAction Stop
         }
         catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            if ($error[0].Exception.response.statuscode -eq 'TooManyRequests') {
-                Write-Error 'API Quota exceeded, quitting'
-                Throw
+            $canliiError = $error[0]
+            if ($canliiError.Exception.response.statuscode -eq 'TooManyRequests') {
+                Write-Warning 'API quota exceeded'
             }
+            else {
+                $canliiErrorMessage = $canliierror.errordetails.message | ConvertFrom-Json
+                $warning = 'canlii.org says {0}: {1}' -f $canliiErrorMessage.error,$canliiErrorMessage.message
+                Write-Warning $warning
+            }
+            throw 'Quitting due to API error'
         }
     }
 }
